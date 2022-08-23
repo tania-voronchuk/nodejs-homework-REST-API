@@ -1,30 +1,26 @@
-const Jimp = require("jimp");
 const {User} = require("../../models/user");
 const fs = require("fs/promises");
 const path = require("path");
-
 const avatarsDir = path.join(__dirname, "../../", "public", "avatars");
 
 const updateAvatar = async(req, res) => {
-  try {
-    const {_id} = req.user;
-    const {path: tempPath, originalname} = req.file;
-    const [extension] = originalname.split(".").reverse();
-    const avatar = await Jimp.read(tempPath);
-    await avatar.resize(250, 250).writeAsync(tempPath);
-    const newName = `${_id}.${extension}`;
-    const uploadPath = path.join(avatarsDir, newName);
-    await fs.rename(tempPath, uploadPath);  
-    const avatarURL = path.join("avatars", newName);
-    await User.findByIdAndUpdate(_id, {avatarURL});  
-    res.json({
-      avatarURL
-    })
-  } catch (error) {
+    const {path: tempUpload, originalname} = req.file;
+    const {_id: id} = req.user;
+    const imageName = `${id}_${originalname}`;
 
-    await fs.unlink(req.file.path);
-    throw error;
-   }
-}
+try {
 
-module.exports = updateAvatar
+   const resultUpload = path.join(avatarsDir, imageName);
+   await fs.rename(tempUpload, resultUpload);
+   const avatarURL = path.join("public", "avatars", imageName);
+   await User.findByIdAndUpdate(req.user._id, {avatarURL});
+   res.json({avatarURL});
+
+} catch (error) {
+
+  await fs.unlink(tempUpload);
+  throw error;
+ }
+};
+
+module.exports = updateAvatar;
