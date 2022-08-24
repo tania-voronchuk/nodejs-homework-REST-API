@@ -3,11 +3,11 @@ const {User} = require("../models/user")
 const {SECRET_KEY} = process.env;
 
 
-const users = async(req, res, next) => {
+const auth = async(req, res, next) => {
   const {authorization = " "} = req.headers;
   const [bearer, token] = authorization.split(" ");
 try {
-    if(bearer !== "Bearer") {
+    if(!(bearer === "Bearer" && token)) {
         const error = new Error("Not authorized"); 
         error.status = 401;
         throw error;
@@ -29,4 +29,5 @@ next();
   }
 }
 
-module.exports = users;
+module.exports = auth;
+

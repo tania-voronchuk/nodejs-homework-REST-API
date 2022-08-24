@@ -1,13 +1,16 @@
 const express = require('express');
 const ctrl = require("../../controllers/users");
 const {ctrlWrapper} = require("../../helpers");
-const {users} = require("../../middlewares");
+const {auth} = require("../../middlewares");
+// const {upload} = require("../../middlewares/upload");
 const router = express.Router();
 
 router.post("/signup", ctrlWrapper(ctrl.signup));
 router.post("/login", ctrlWrapper(ctrl.login));
-router.get("/current", users, ctrlWrapper(ctrl.getCurrent));
-router.get("/logout", users, ctrlWrapper(ctrl.logout));
+router.get("/current", auth, ctrlWrapper(ctrl.getCurrent));
+router.get("/logout",  auth, ctrlWrapper(ctrl.logout));
+// router.patch("/avatars",  auth, upload.single("avatars"), ctrlWrapper(ctrl.updateAvatar));
+router.get("/verify:verificationToken", ctrlWrapper(ctrl.verifyEmail));
 
-module.exports = router;
+module.exports = router
 

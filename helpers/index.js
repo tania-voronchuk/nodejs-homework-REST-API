@@ -1,7 +1,7 @@
 const ctrlWrapper = require("./ctrlWrapper");
-const users = require("../middlewares/users");
+const sendEmail = require("./sendEmail");
 
 module.exports = {
     ctrlWrapper,
-    users
+    sendEmail
 }
